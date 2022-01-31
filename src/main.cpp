@@ -66,7 +66,7 @@ int main(void)
 	rightPaddel._model = idk::scale(rightPaddel._model, idk::vec3(0.2f, 1.0f, 1.0f));
 	rightPaddel._model = idk::translate(rightPaddel._model, idk::vec3(0.8f, 0.0f, 0.0f));
 
-	Ball ball(0.0f, 0.0f, 0.0f, 1.0f, 360,color);
+	Ball ball(0.0f, 0.0f, 0.0f, 1.0f, 6,color);
 	ball._model = idk::scale(ball._model, idk::vec3(0.05f));
 
 
@@ -82,7 +82,7 @@ int main(void)
 		leftPaddel.Draw();
 		rightPaddel.Draw();
 		ball.Draw();
-		ball.Update();
+		/* ball.Update(); */
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

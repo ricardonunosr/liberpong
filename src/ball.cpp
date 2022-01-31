@@ -6,7 +6,8 @@ Ball::Ball(float x, float y, float z, float radius, unsigned int numberOfSides, 
 {
 	_model = idk::mat4();
 
-	int numberOfVertices = numberOfSides + 2;
+	// Number of sides + center vertex
+	int numberOfVertices = numberOfSides + 1;
 
 	float doublePI = 2.0f * IDK_PI;
 
@@ -48,7 +49,16 @@ Ball::Ball(float x, float y, float z, float radius, unsigned int numberOfSides, 
 	{
 		indices[i*3] = 0;
 		indices[i*3+1] = i+1;
-		indices[i*3+2] = i+2;
+		// NOTE(Ricardo): When is the last triangle use v1 as last index
+		if(i==numberOfSides - 1)
+		{
+			indices[i*3+2] = 1;
+		}
+		else
+		{
+			indices[i*3+2] = i+2;
+		}
+
 	}
 
 	// Create VAO and VBO
