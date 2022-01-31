@@ -12,7 +12,8 @@ public:
 	void Bind();
 	void Unbind();
 
-	void SetUniformMat4(const std::string& name, mat4 matrix);
+	void SetUniformMat4(const std::string& name, idk::mat4 matrix);
+	void SetUniformVec3(const std::string& name, const idk::vec3& vector);
 
 private:
 	const std::string ReadShaderSourceFromFile(const std::string& shaderPath);

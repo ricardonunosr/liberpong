@@ -31,11 +31,18 @@ void Shader::Unbind()
 	glUseProgram(0);
 }
 
-void Shader::SetUniformMat4(const std::string& name, mat4 matrix)
+void Shader::SetUniformMat4(const std::string& name, idk::mat4 matrix)
 {
 	int location = glGetUniformLocation(_id, name.c_str());
 
 	glUniformMatrix4fv(location, 1, GL_FALSE, &matrix.columns[0].x);
+}
+
+void Shader::SetUniformVec3(const std::string& name, const idk::vec3& vector)
+{
+	int location = glGetUniformLocation(_id, name.c_str());
+
+	glUniform3f(location, vector.x, vector.y, vector.z);
 }
 
 const std::string Shader::ReadShaderSourceFromFile(const std::string& shaderPath)

@@ -37,12 +37,14 @@ set(SOURCES
     src/main.cpp
 	src/shader.cpp
 	src/paddel.cpp
+	src/ball.cpp
 )
 
 set(HEADERS
 	src/shader.h
 	src/IDKMath.h
 	src/paddel.h
+	src/ball.h
 )
 
 link_directories("external/glfw/lib")
