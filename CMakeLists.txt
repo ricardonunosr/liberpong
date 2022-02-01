@@ -38,6 +38,7 @@ set(SOURCES
 	src/shader.cpp
 	src/paddel.cpp
 	src/ball.cpp
+	src/game_object.cpp
 )
 
 set(HEADERS
@@ -45,6 +46,8 @@ set(HEADERS
 	src/IDKMath.h
 	src/paddel.h
 	src/ball.h
+	src/game_object.h
+	src/pong.h
 )
 
 link_directories("external/glfw/lib")

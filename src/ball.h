@@ -1,16 +1,24 @@
 #pragma once
+
 #include "IDKMath.h"
 #include "shader.h"
+#include "game_object.h"
 #include <memory>
 
-class Ball{
+struct Paddel;
+
+class Ball :public GameObject {
 public:
 	Ball(float x, float y, float z, float radius, unsigned int numberOfSides, const idk::vec4& color);
 
+	void Init();
+
 	void Draw();
-	void Update();
+	void Update(float deltaTime) override;
+	bool CollidedWithPad(Paddel& paddel);
+	void CollidedWithTerrain();
+	void StartMovement();
 public:
-	idk::mat4 _model;
 private:
 	float _x, _y, _z, _radius;
 	unsigned int _numberOfSides;

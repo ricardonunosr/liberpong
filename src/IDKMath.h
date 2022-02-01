@@ -1,5 +1,5 @@
 /*
-    _        __           _  __     __                                          __  __
+	_        __           _  __     __                                          __  __
    (_)  ____/ /___  ____ ( )/ /_   / /______  ____ _      __   ____ ___  ____ _/ /_/ /_
   / /  / __  / __ \/ __ \|// __/  / //_/ __ \/ __ \ | /| / /  / __ `__ \/ __ `/ __/ __ \
  / /  / /_/ / /_/ / / / / / /_   / ,< / / / / /_/ / |/ |/ /  / / / / / / /_/ / /_/ / / /
@@ -27,11 +27,13 @@ namespace idk {
 			float z, b;
 		};
 
-		vec3() :x(0), y(0), z(0){}
+		vec3() :x(0), y(0), z(0) {}
 
-		vec3(float value) :x(value), y(value), z(value){}
+		vec3(float value) :x(value), y(value), z(value) {}
 
-		vec3(float xVal, float yVal, float zVal) :x(xVal), y(yVal), z(zVal){}
+		vec3(float xVal, float yVal, float zVal) :x(xVal), y(yVal), z(zVal) {}
+
+		vec3(const vec3& vector) :x(vector.x), y(vector.y), z(vector.z) {}
 
 		// NOTE(Ricardo): Maybe we can have negative rows but for now its only positive rows.
 		float& operator[](unsigned int row)
@@ -39,6 +41,24 @@ namespace idk {
 			float* address = (float*)this;
 			return address[row];
 		};
+
+		vec3 operator*(float value) {
+			vec3 result;
+			result.x = x * value;
+			result.y = y * value;
+			result.z = z * value;
+
+			return result;
+		}
+
+		vec3& operator+=(vec3& vector) {
+
+			x += vector.x;
+			y += vector.y;
+			z += vector.z;
+
+			return *this;
+		}
 	};
 
 	struct vec4 {
@@ -110,20 +130,22 @@ namespace idk {
 	inline mat4 ortho2D(float left, float right, float bottom, float top);
 
 	// matrix scale
-	inline mat4 scale(mat4& matrix,vec3& vector);
+	inline mat4 scale(mat4& matrix, vec3& vector);
 
 	// matrix translate
-	inline mat4 translate(mat4& matrix,vec3& vector);
-/*
-	  _____                 _                           _        _   _
-	 |_   _|               | |                         | |      | | (_)
-	   | |  _ __ ___  _ __ | | ___ _ __ ___   ___ _ __ | |_ __ _| |_ _  ___  _ __
-	   | | | '_ ` _ \| '_ \| |/ _ \ '_ ` _ \ / _ \ '_ \| __/ _` | __| |/ _ \| '_ \
-	  _| |_| | | | | | |_) | |  __/ | | | | |  __/ | | | || (_| | |_| | (_) | | | |
-	 |_____|_| |_| |_| .__/|_|\___|_| |_| |_|\___|_| |_|\__\__,_|\__|_|\___/|_| |_|
-					 | |
-					 |_|
-*/
+	inline mat4 translate(mat4& matrix, vec3& vector);
+
+	inline vec3 normalize(vec3& vector);
+	/*
+		  _____                 _                           _        _   _
+		 |_   _|               | |                         | |      | | (_)
+		   | |  _ __ ___  _ __ | | ___ _ __ ___   ___ _ __ | |_ __ _| |_ _  ___  _ __
+		   | | | '_ ` _ \| '_ \| |/ _ \ '_ ` _ \ / _ \ '_ \| __/ _` | __| |/ _ \| '_ \
+		  _| |_| | | | | | |_) | |  __/ | | | | |  __/ | | | || (_| | |_| | (_) | | | |
+		 |_____|_| |_| |_| .__/|_|\___|_| |_| |_|\___|_| |_|\__\__,_|\__|_|\___/|_| |_|
+						 | |
+						 |_|
+	*/
 
 	inline mat4 perspective(float fovy, float aspectRatio, float nearPlan, float farPlane) {
 		mat4 matrix = mat4();
@@ -143,7 +165,7 @@ namespace idk {
 		return mat;
 	}
 
-	inline mat4 scale(mat4& matrix,vec3& vector)
+	inline mat4 scale(mat4& matrix, vec3& vector)
 	{
 		mat4 mat = mat4();
 		mat[0][0] = vector.x * matrix[0][0];
@@ -152,7 +174,7 @@ namespace idk {
 		return mat;
 	}
 
-	inline mat4 translate(mat4& matrix,vec3& vector)
+	inline mat4 translate(mat4& matrix, vec3& vector)
 	{
 		mat4 mat = mat4();
 		mat[0][0] = matrix[0][0];
@@ -162,5 +184,10 @@ namespace idk {
 		mat[3][1] = matrix[3][1] + vector.y;
 		mat[3][2] = matrix[3][2] + vector.z;
 		return mat;
+	}
+
+	inline vec3 normalize(vec3& vector)
+	{
+
 	}
 }

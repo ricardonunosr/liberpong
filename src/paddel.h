@@ -2,19 +2,24 @@
 
 #include "IDKMath.h"
 #include "shader.h"
+#include "game_object.h"
 
 #include <memory> 
 
-class Paddel {
+class Paddel : public GameObject {
 public:
-	Paddel(unsigned int width, unsigned int height, const idk::vec4& color);
+	Paddel(const idk::vec3& size, const idk::vec3& position);
+
+	void Init();
 
 	void Draw();
+	void Update(float deltaTime) override;
+	void MoveUp();
+	void MoveDown();
+	void Stop();
 public:
-	idk::mat4 _model;
+	idk::vec3 _size;
 private:
 	unsigned int _vao, _vbo;
-	unsigned int _width, _height;
-	const idk::vec4& _color;
 	std::unique_ptr<Shader> _shader;
 };
