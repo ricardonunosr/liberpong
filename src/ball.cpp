@@ -126,6 +126,8 @@ void Ball::Update(float deltaTime)
 
 	_shader->Bind();
 
+	printf("Checking: %.6f,%.6f,%.6f\n", _position.x, _position.y, _position.z);
+
 	_shader->SetUniformVec3("position", _position);
 	_shader->Unbind();
 }
@@ -139,9 +141,15 @@ bool Ball::CollidedWithPad(Paddel& paddel)
 
 	if (bCheckY)
 	{
-		bool bCheckX = _position.x + _radius > paddel._position.x - paddel._size.x / 2.0f;
-		if (bCheckX)
-			_movementDirection.x = -_movementDirection.x;
+		float radiusSquared = _radius * _radius;
+
+		idk::vec3 ballProjectedToPaddle = { paddel._position.x + paddel._size.x * paddel._forward.x,_position.y,_position.z };
+		idk::vec3 distanceFromBallToProjection = _position - ballProjectedToPaddle;
+
+		if (distanceFromBallToProjection.SquareLength() < radiusSquared) {
+			_movementDirection = idk::normalize(_position - paddel._position);
+			_movementDirection.z = _position.z;
+		}
 	}
 
 
@@ -159,5 +167,5 @@ void Ball::CollidedWithTerrain()
 
 void Ball::StartMovement()
 {
-	_movementSpeed = 250.0f;
+	_movementSpeed = 350.0f;
 }

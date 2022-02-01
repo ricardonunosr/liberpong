@@ -9,6 +9,7 @@
 #pragma once
 
 #define IDK_PI 3.14159265
+#include <math.h>
 
 namespace idk {
 	struct vec3 {
@@ -58,6 +59,31 @@ namespace idk {
 			z += vector.z;
 
 			return *this;
+		}
+
+		vec3 operator-(vec3& vector) {
+
+			vec3 result;
+			result.x = x - vector.x;
+			result.y = y - vector.y;
+			result.z = z - vector.z;
+
+			return result;
+		}
+
+		vec3 operator/(float value) {
+
+			vec3 result;
+			result.x = x / value;
+			result.y = y / value;
+			result.z = z / value;
+
+			return result;
+		}
+
+		//
+		float SquareLength() {
+			return (x * x) + (y * y);
 		}
 	};
 
@@ -135,7 +161,9 @@ namespace idk {
 	// matrix translate
 	inline mat4 translate(mat4& matrix, vec3& vector);
 
+	//
 	inline vec3 normalize(vec3& vector);
+
 	/*
 		  _____                 _                           _        _   _
 		 |_   _|               | |                         | |      | | (_)
@@ -188,6 +216,6 @@ namespace idk {
 
 	inline vec3 normalize(vec3& vector)
 	{
-
+		return vector / sqrtf(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
 	}
 }

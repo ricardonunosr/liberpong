@@ -14,8 +14,8 @@
 #define PADDEL_HEIGHT 150
 
 // Game Objects
-static Paddel leftPaddel{ idk::vec3(PADDEL_WIDTH, PADDEL_HEIGHT, 1.0f), idk::vec3(-350.0f, 1.0f, 1.0f) };
-static Paddel rightPaddel{ idk::vec3(PADDEL_WIDTH, PADDEL_HEIGHT, 1.0f), idk::vec3(350.0f, 1.0f, 1.0f) };
+static Paddel leftPaddel{ {PADDEL_WIDTH, PADDEL_HEIGHT, 1.0f}, {-350.0f, 1.0f, 1.0f},{ 1.0f,0.0f,0.0f} };
+static Paddel rightPaddel{ {PADDEL_WIDTH, PADDEL_HEIGHT, 1.0f},{ 350.0f, 1.0f, 1.0f},{-1.0f,0.0f,0.0f} };
 static Ball ball{ 0.0f, 0.0f, 0.0f, 3.5f, 260, {} };
 
 
@@ -117,7 +117,7 @@ int main(void)
 		leftPaddel.Update(deltaTime);
 		rightPaddel.Update(deltaTime);
 		ball.Update(deltaTime);
-		//ball.CollidedWithPad(leftPaddel);
+		ball.CollidedWithPad(leftPaddel);
 		ball.CollidedWithPad(rightPaddel);
 		ball.CollidedWithTerrain();
 

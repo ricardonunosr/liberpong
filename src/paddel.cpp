@@ -16,10 +16,11 @@ float vertices[] = {
 	0.5f,-0.5f,0.0f
 };
 
-Paddel::Paddel(const idk::vec3& size, const idk::vec3& position) : _vao(0), _vbo(0)
+Paddel::Paddel(const idk::vec3& size, const idk::vec3& position, const idk::vec3& forward) : _vao(0), _vbo(0)
 {
 	_position = position;
 	_size = size;
+	_forward = forward;
 }
 
 void Paddel::Init()
