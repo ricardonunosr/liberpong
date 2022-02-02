@@ -7,10 +7,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-Ball::Ball(float x, float y, float z, float radius, unsigned int numberOfSides, const idk::vec4& color) :
-	_x(x), _y(y), _z(z), _radius(radius), _numberOfSides(numberOfSides), _color(color)
+Ball::Ball(float x, float y, float z, float radius, unsigned int numberOfSides) : _x(x), _y(y), _z(z), _radius(radius), _numberOfSides(numberOfSides)
 {
-
 }
 
 void Ball::Init()
@@ -21,7 +19,7 @@ void Ball::Init()
 	float doublePI = 2.0f * IDK_PI;
 
 	// NOTE(Ricardo): 3 floats (pos) + 4 floats (color)
-	float* vertices = new float[numberOfVertices * 7];
+	float *vertices = new float[numberOfVertices * 7];
 	for (int i = 0; i < numberOfVertices * 7; i++)
 	{
 		vertices[i] = 0;
@@ -35,7 +33,6 @@ void Ball::Init()
 	vertices[4] = 0.0f;
 	vertices[5] = 1.0f;
 	vertices[6] = 1.0f;
-
 
 	for (unsigned int i = 1; i < numberOfVertices; i++)
 	{
@@ -51,8 +48,7 @@ void Ball::Init()
 		vertices[i * 7 + 6] = 1.0f;
 	}
 
-
-	unsigned int* indices = new unsigned int[_numberOfSides * 3];
+	unsigned int *indices = new unsigned int[_numberOfSides * 3];
 	//Index Buffer
 	for (unsigned int i = 0; i < _numberOfSides; i++)
 	{
@@ -67,7 +63,6 @@ void Ball::Init()
 		{
 			indices[i * 3 + 2] = i + 2;
 		}
-
 	}
 
 	// Create VAO and VBO
@@ -78,9 +73,9 @@ void Ball::Init()
 	glBindBuffer(GL_ARRAY_BUFFER, _vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * numberOfVertices * 7, vertices, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)12);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void *)12);
 
 	glCreateBuffers(1, &_ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo);
@@ -117,7 +112,6 @@ void Ball::Draw()
 
 	glDrawElements(GL_TRIANGLES, _numberOfSides * 3, GL_UNSIGNED_INT, 0);
 	_shader->Unbind();
-
 }
 
 void Ball::Update(float deltaTime)
@@ -126,43 +120,52 @@ void Ball::Update(float deltaTime)
 
 	_shader->Bind();
 
-	printf("Checking: %.6f,%.6f,%.6f\n", _position.x, _position.y, _position.z);
+	//printf("Checking: %.6f,%.6f,%.6f\n", _position.x, _position.y, _position.z);
 
 	_shader->SetUniformVec3("position", _position);
 	_shader->Unbind();
 }
 
-bool Ball::CollidedWithPad(Paddel& paddel)
+bool Ball::CollidedWithPad(Paddel &paddel)
 {
 	// Check Y
 	bool bCheckY =
-		_position.y <(paddel._position.y + paddel._size.y / 2.0f) &&
-		_position.y >(paddel._position.y - paddel._size.y / 2.0f);
+		_position.y < (paddel._position.y + paddel._size.y / 2.0f) &&
+		_position.y > (paddel._position.y - paddel._size.y / 2.0f);
 
 	if (bCheckY)
 	{
 		float radiusSquared = _radius * _radius;
 
-		idk::vec3 ballProjectedToPaddle = { paddel._position.x + paddel._size.x * paddel._forward.x,_position.y,_position.z };
+		idk::vec3 ballProjectedToPaddle = {paddel._position.x + paddel._size.x * paddel._forward.x, _position.y, _position.z};
 		idk::vec3 distanceFromBallToProjection = _position - ballProjectedToPaddle;
 
-		if (distanceFromBallToProjection.SquareLength() < radiusSquared) {
+		if (distanceFromBallToProjection.SquareLength() < radiusSquared)
+		{
 			_movementDirection = idk::normalize(_position - paddel._position);
 			_movementDirection.z = _position.z;
 		}
 	}
 
-
 	return false;
 }
 
-void Ball::CollidedWithTerrain()
+const COLLIDED Ball::CollidedWithTerrain()
 {
-	bool bCollidesTop = _position.y + _radius > (float)(Pong::Height / 2);
-	bool bCollidesBottom = _position.y - _radius < -(float)(Pong::Height / 2);
+	bool bCollidesTop = _position.y + _radius > (float)(Height / 2);
+	bool bCollidesBottom = _position.y - _radius < -(float)(Height / 2);
 
 	if (bCollidesTop || bCollidesBottom)
 		_movementDirection.y = -_movementDirection.y;
+
+	bool bCollidesRight = _position.x + _radius > (float)(Width / 2);
+	bool bCollidesLeft = _position.x - _radius < -(float)(Width / 2);
+
+	if (bCollidesRight)
+		return COLLIDED::RIGHT;
+
+	if (bCollidesLeft)
+		return COLLIDED::LEFT;
 }
 
 void Ball::StartMovement()

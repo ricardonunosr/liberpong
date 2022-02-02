@@ -7,23 +7,32 @@
 
 struct Paddel;
 
-class Ball :public GameObject {
+enum COLLIDED
+{
+	NONE = 0,
+	LEFT = 1,
+	RIGHT = 2
+};
+
+class Ball : public GameObject
+{
 public:
-	Ball(float x, float y, float z, float radius, unsigned int numberOfSides, const idk::vec4& color);
+	Ball(float x, float y, float z, float radius, unsigned int numberOfSides);
+	Ball() {}
 
 	void Init();
 
 	void Draw();
 	void Update(float deltaTime) override;
-	bool CollidedWithPad(Paddel& paddel);
-	void CollidedWithTerrain();
+	bool CollidedWithPad(Paddel &paddel);
+	const COLLIDED CollidedWithTerrain();
 	void StartMovement();
+
 public:
 private:
 	float _x, _y, _z, _radius;
 	unsigned int _numberOfSides;
 	unsigned int _vao, _vbo, _ibo;
 	unsigned int _width, _height;
-	const idk::vec4& _color;
 	std::unique_ptr<Shader> _shader;
 };

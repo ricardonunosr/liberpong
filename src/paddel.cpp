@@ -6,17 +6,16 @@
 
 float vertices[] = {
 	// Lower triangle
-	-0.5f, 0.5f,0.0f,
-	-0.5f,-0.5f,0.0f,
-	0.5f,-0.5f,0.0f,
+	-0.5f, 0.5f, 0.0f,
+	-0.5f, -0.5f, 0.0f,
+	0.5f, -0.5f, 0.0f,
 
 	// Upper triangle
-	-0.5f, 0.5f,0.0f,
-	0.5f, 0.5f,0.0f,
-	0.5f,-0.5f,0.0f
-};
+	-0.5f, 0.5f, 0.0f,
+	0.5f, 0.5f, 0.0f,
+	0.5f, -0.5f, 0.0f};
 
-Paddel::Paddel(const idk::vec3& size, const idk::vec3& position, const idk::vec3& forward) : _vao(0), _vbo(0)
+Paddel::Paddel(const idk::vec3 &size, const idk::vec3 &position, const idk::vec3 &forward) : _vao(0), _vbo(0)
 {
 	_position = position;
 	_size = size;
@@ -33,7 +32,7 @@ void Paddel::Init()
 	glBindBuffer(GL_ARRAY_BUFFER, _vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 
 	_shader = std::make_unique<Shader>("assets/shaders/basic.vert", "assets/shaders/basic.frag");
 	_shader->Bind();
@@ -66,14 +65,14 @@ void Paddel::Update(float deltaTime)
 	//printf("Checking: %.6f,%.6f,%.6f\n", _position.x, _position.y, _position.z);
 
 	// Top
-	if (_position.y + _size.y / 2 >= (float)Pong::Height / 2)
+	if (_position.y + _size.y / 2 >= (float)Height / 2)
 	{
 		Stop();
 		return;
 	}
 
 	//Bottom
-	if (_position.y - _size.y / 2 <= -(float)(Pong::Height / 2))
+	if (_position.y - _size.y / 2 <= -(float)(Height / 2))
 	{
 		Stop();
 		return;
