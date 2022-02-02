@@ -4,8 +4,7 @@
 #include <fstream>
 #include <iostream>
 
-
-Shader::Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
+Shader::Shader(const std::string &vertexShaderPath, const std::string &fragmentShaderPath)
 {
 	std::string vertexShaderSource = ReadShaderSourceFromFile(vertexShaderPath);
 	std::string fragShaderSource = ReadShaderSourceFromFile(fragmentShaderPath);
@@ -14,6 +13,7 @@ Shader::Shader(const std::string& vertexShaderPath, const std::string& fragmentS
 	const unsigned int fragmentShader = CompileShader(fragShaderSource, GL_FRAGMENT_SHADER);
 
 	LinkProgram(vertexShader, fragmentShader);
+	CacheUniforms();
 	Unbind();
 }
 
@@ -31,21 +31,21 @@ void Shader::Unbind()
 	glUseProgram(0);
 }
 
-void Shader::SetUniformMat4(const std::string& name, idk::mat4 matrix)
+void Shader::SetUniformMat4(const std::string &name, idk::mat4 matrix)
 {
-	int location = glGetUniformLocation(_id, name.c_str());
+	int location = GetUniformLocation(name);
 
 	glUniformMatrix4fv(location, 1, GL_FALSE, &matrix.columns[0].x);
 }
 
-void Shader::SetUniformVec3(const std::string& name, const idk::vec3& vector)
+void Shader::SetUniformVec3(const std::string &name, const idk::vec3 &vector)
 {
-	int location = glGetUniformLocation(_id, name.c_str());
+	int location = GetUniformLocation(name);
 
 	glUniform3f(location, vector.x, vector.y, vector.z);
 }
 
-const std::string Shader::ReadShaderSourceFromFile(const std::string& shaderPath)
+const std::string Shader::ReadShaderSourceFromFile(const std::string &shaderPath)
 {
 	std::string result;
 	std::ifstream filestream;
@@ -89,10 +89,10 @@ void Shader::LinkProgram(const unsigned int vertexShader, const unsigned int fra
 	glDeleteShader(fragmentShader);
 }
 
-const unsigned int Shader::CompileShader(const std::string& shaderSource, unsigned int type)
+const unsigned int Shader::CompileShader(const std::string &shaderSource, unsigned int type)
 {
 	unsigned int shader = glCreateShader(type);
-	const char* shaderCString = shaderSource.c_str();
+	const char *shaderCString = shaderSource.c_str();
 	glShaderSource(shader, 1, &shaderCString, NULL);
 	glCompileShader(shader);
 
@@ -107,4 +107,36 @@ const unsigned int Shader::CompileShader(const std::string& shaderSource, unsign
 	}
 
 	return shader;
+}
+
+void Shader::CacheUniforms()
+{
+	int longestUniformMaxLenghtName;
+	int numUniforms;
+	glGetProgramiv(_id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &longestUniformMaxLenghtName);
+	glGetProgramiv(_id, GL_ACTIVE_UNIFORMS, &numUniforms);
+
+	char *name = (char *)malloc(longestUniformMaxLenghtName * sizeof(char));
+	for (size_t i = 0; i < numUniforms; i++)
+	{
+		int size;
+		unsigned int type;
+		glGetActiveUniform(_id, i, longestUniformMaxLenghtName, NULL, &size, &type, name);
+		int location = glGetUniformLocation(_id, name);
+		_uniformCache[std::string(name)] = location;
+	}
+}
+
+int Shader::GetUniformLocation(const std::string &name)
+{
+	auto locationIter = _uniformCache.find(name);
+	if (locationIter != _uniformCache.end())
+	{
+		auto location = locationIter->second;
+		return location;
+	}
+	else
+	{
+		std::cout << "Couldn't find cached uniform:" << name << std::endl;
+	}
 }
