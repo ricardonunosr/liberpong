@@ -5,7 +5,7 @@
 #include "game_object.h"
 #include <memory>
 
-struct Paddel;
+class Paddel;
 
 enum COLLIDED
 {

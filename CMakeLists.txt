@@ -4,11 +4,11 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(Pong)
 
-#GLFW additions
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+find_package(OpenGL REQUIRED)
 
+if (MSVC)
+  add_compile_options(/W3 /WX)
+endif()
 
 set(SOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 
@@ -33,37 +33,33 @@ if(CMAKE_CONFIGURATION_TYPES)
   endforeach()
 endif()
 
+
 set(SOURCES 
-    src/main.cpp
+	src/platform/platform_win32.cpp
+	src/main.cpp
 	src/shader.cpp
 	src/paddel.cpp
 	src/ball.cpp
 	src/game_object.cpp
+	src/gl.cpp
 )
 
 set(HEADERS
-	src/shader.h
 	src/IDKMath.h
+	src/shader.h
 	src/paddel.h
 	src/ball.h
 	src/game_object.h
 	src/pong.h
+	src/gl
+	src/KHR
 )
 
-link_directories("external/glfw/lib")
-add_subdirectory("external/glad/")
+add_executable(${PROJECT_NAME} WIN32 ${SOURCES} ${HEADERS})
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+target_include_directories(${PROJECT_NAME} PUBLIC src/)
 
-target_include_directories(${PROJECT_NAME}
-    PUBLIC external/glfw/include
-)
-
-target_link_libraries(${PROJECT_NAME}
-	PRIVATE 
-		glfw3
-		glad
-)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIBRARY})
 
 #
 # Copy assets

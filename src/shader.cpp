@@ -1,6 +1,6 @@
 #include "shader.h"
 
-#include <glad/gl.h>
+#include <gl.h>
 #include <fstream>
 #include <iostream>
 
@@ -117,7 +117,7 @@ void Shader::CacheUniforms()
 	glGetProgramiv(_id, GL_ACTIVE_UNIFORMS, &numUniforms);
 
 	char *name = (char *)malloc(longestUniformMaxLenghtName * sizeof(char));
-	for (size_t i = 0; i < numUniforms; i++)
+	for (int i = 0; i < numUniforms; i++)
 	{
 		int size;
 		unsigned int type;
@@ -138,5 +138,6 @@ int Shader::GetUniformLocation(const std::string &name)
 	else
 	{
 		std::cout << "Couldn't find cached uniform:" << name << std::endl;
+		return -1;
 	}
 }

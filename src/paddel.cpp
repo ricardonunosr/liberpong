@@ -1,5 +1,5 @@
 #include "paddel.h"
-#include <glad/gl.h>
+#include <gl.h>
 #include "pong.h"
 
 #include <stdio.h>
