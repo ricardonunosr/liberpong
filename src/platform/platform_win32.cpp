@@ -12,12 +12,24 @@
 
 static bool running = true;
 
+typedef void (*KeyFunc) (int key, int action);
+
 struct Window
 {
 	HWND handle;
 	HDC dc;
 	HGLRC rc;
 };
+
+static KeyFunc platform_key_callback = nullptr;
+
+#define PRESSED 1
+#define RELEASED 0
+
+static void set_platform_key_callback(KeyFunc key_callback)
+{
+	platform_key_callback = key_callback;
+}
 
 LRESULT platform_window_callback(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
@@ -26,21 +38,33 @@ LRESULT platform_window_callback(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lPar
         case WM_CLOSE:
 		running = false;
 		break;
+		case WM_KEYDOWN:
+		case WM_KEYUP:
+		{
+			// wParam -> w stands for word (16 bits)
+			short keyCode = (short)wParam;
+			int isDown =  !(lParam & (1 << 31)); // 0 = pressed 1 = released
+			int wasDown = (lParam & (1 << 30)); // 0 = released 1 = pressed
+			if(platform_key_callback)
+			{
+				platform_key_callback(keyCode,isDown);
+			}
+			printf("%d %s-> %s\n", keyCode, wasDown ? "PRESSED":"RELEASED",isDown ? "PRESSED":"RELEASED");
+		}
+		break;
 	}
-    
+
 	return DefWindowProc(hWnd, Msg, wParam, lParam);
 }
 
 void platform_update_window(Window* window)
 {
 	MSG msg;
-    
+
 	while (PeekMessageA(&msg, window->handle, 0, 0, PM_REMOVE))
 	{
 		TranslateMessage(&msg);
 		DispatchMessageA(&msg);
-        
-		glClear(GL_COLOR_BUFFER_BIT);
 	}
 }
 
@@ -221,10 +245,38 @@ void MessageCallback(GLenum source,
 			type, severity, message);
 }
 
-int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
+void key_callback(int key,int action)
+{
+	//Left Paddel
+	if (key == 'W' && action == PRESSED)
+		_leftPaddel.MoveUp();
+	if (key == 'W' && action == RELEASED)
+		_leftPaddel.Stop();
+	if (key == 'S' && action == PRESSED)
+		_leftPaddel.MoveDown();
+	if (key == 'S' && action == RELEASED)
+		_leftPaddel.Stop();
+
+	//Right Paddel
+	if (key == VK_UP && action == PRESSED)
+		_rightPaddel.MoveUp();
+	if (key == VK_UP && action == RELEASED)
+		_rightPaddel.Stop();
+	if (key == VK_DOWN && action == PRESSED)
+		_rightPaddel.MoveDown();
+	if (key == VK_DOWN && action == RELEASED)
+		_rightPaddel.Stop();
+
+	//Ball
+	if (key == VK_SPACE && action == PRESSED)
+		_ball.StartMovement();
+}
+
+int main(int argc, char** argv)
 {
 	Window* window = create_window(800, 600, "Pong");
-    
+    set_platform_key_callback(key_callback);
+
 	if (!InitOpenGL(window, 4, 6, 32, 24))
 		return 1;
     
@@ -236,7 +288,9 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 	ResetGame();
 
 	float deltaTime, lastFrame = 0;
-
+	LARGE_INTEGER frequency, startCounter;
+	QueryPerformanceFrequency(&frequency);
+	QueryPerformanceCounter(&startCounter);
 	/* Loop until the user closes the window */
 	while (running)
 	{
@@ -244,9 +298,12 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-		float currentFrame = (float)GetTickCount64();
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
+		LARGE_INTEGER endCounter;
+		QueryPerformanceCounter(&endCounter);
+
+		float time = (float)(endCounter.QuadPart-startCounter.QuadPart) / (float)frequency.QuadPart;
+		deltaTime = time - lastFrame;
+		lastFrame = time;
 
 		//Update
 		_leftPaddel.Update(deltaTime);
@@ -270,5 +327,11 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 		platform_update_window(window);
 	}
 
-	return 0;
+	delete window;
+
 }
+
+//int WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, LPSTR cmdline, int cmdshow)
+//{
+//	return pongMain(0,(char**)cmdline);
+//}

@@ -6,10 +6,6 @@ project(Pong)
 
 find_package(OpenGL REQUIRED)
 
-if (MSVC)
-  add_compile_options(/W3 /WX)
-endif()
-
 set(SOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Pong/lib 
@@ -36,7 +32,6 @@ endif()
 
 set(SOURCES 
 	src/platform/platform_win32.cpp
-	src/main.cpp
 	src/shader.cpp
 	src/paddel.cpp
 	src/ball.cpp
@@ -60,6 +55,8 @@ add_executable(${PROJECT_NAME} WIN32 ${SOURCES} ${HEADERS})
 target_include_directories(${PROJECT_NAME} PUBLIC src/)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIBRARY})
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY LINK_OPTIONS $<$<CXX_COMPILER_ID:MSVC>:$<IF:$<CONFIG:Release>,/SUBSYSTEM:WINDOWS,/SUBSYSTEM:CONSOLE>>)
 
 #
 # Copy assets
