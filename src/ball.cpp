@@ -1,5 +1,5 @@
 #include "ball.h"
-#include <glad/gl.h>
+#include <gl.h>
 #include <math.h>
 #include "paddel.h"
 
@@ -16,7 +16,7 @@ void Ball::Init()
 	// Number of sides + center vertex
 	int numberOfVertices = _numberOfSides + 1;
 
-	float doublePI = 2.0f * IDK_PI;
+	float doublePI = 2.0f * (float)IDK_PI;
 
 	// NOTE(Ricardo): 3 floats (pos) + 4 floats (color)
 	float *vertices = new float[numberOfVertices * 7];
@@ -34,7 +34,7 @@ void Ball::Init()
 	vertices[5] = 1.0f;
 	vertices[6] = 1.0f;
 
-	for (unsigned int i = 1; i < numberOfVertices; i++)
+	for (int i = 1; i < numberOfVertices; i++)
 	{
 		float valueX = _x + (_radius * cos(i * doublePI / _numberOfSides));
 		float valueY = _y + (_radius * sin(i * doublePI / _numberOfSides));
@@ -93,7 +93,7 @@ void Ball::Init()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 
 	double random_X = ((double)rand() / (RAND_MAX));
 	double random_Y = ((double)rand() / (RAND_MAX));
@@ -156,7 +156,10 @@ const COLLIDED Ball::CollidedWithTerrain()
 	bool bCollidesBottom = _position.y - _radius < -(float)(Height / 2);
 
 	if (bCollidesTop || bCollidesBottom)
+	{
 		_movementDirection.y = -_movementDirection.y;
+		return COLLIDED::NONE;
+	}
 
 	bool bCollidesRight = _position.x + _radius > (float)(Width / 2);
 	bool bCollidesLeft = _position.x - _radius < -(float)(Width / 2);
@@ -166,6 +169,8 @@ const COLLIDED Ball::CollidedWithTerrain()
 
 	if (bCollidesLeft)
 		return COLLIDED::LEFT;
+
+	return COLLIDED::NONE;
 }
 
 void Ball::StartMovement()
