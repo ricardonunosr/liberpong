@@ -20,10 +20,10 @@ git clone https://github.com/ricardonunosr/liberpong
 cd liberpong
 ```
 
-- Use CMake to build repo ( using CMakePresets )
+- Use CMake to build repo
 
 ```bash
-cmake --preset x64-Debug
-cmake --build --preset x64-Debug
-./build/x64-Debug/Pong/bin/Pong.exe
+mkdir build
+cmake -S . -B build
+cmake --build build
 ```
