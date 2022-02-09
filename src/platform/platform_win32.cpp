@@ -71,12 +71,12 @@ void platform_update_window(Window* window)
 Window* create_window(int width, int height, const char* title)
 {
 	const char* windowClass = "pong_class";
-    
+
 	HWND windowHandle = {};
 	WNDCLASSEXA wc = {};
-    
+
 	HINSTANCE hInst = GetModuleHandleA(0);
-    
+
 	if (!GetClassInfoExA(hInst, windowClass, &wc)) {
 		wc.cbSize = sizeof(WNDCLASSEXA);
 		wc.style = CS_OWNDC;
@@ -84,13 +84,14 @@ Window* create_window(int width, int height, const char* title)
 		wc.hInstance = hInst;
 		wc.lpszClassName = windowClass;
 		wc.hCursor = LoadCursor(hInst, IDC_ARROW);
-        
+		wc.hIcon = LoadIconA(hInst,MAKEINTRESOURCE(101));
+
 		if (!RegisterClassExA(&wc)) {
 			MessageBoxA(windowHandle, "Failed to register window class", "Error", MB_ICONEXCLAMATION | MB_OK);
 			return false;
 		}
 	}
-    
+
 	windowHandle = CreateWindowEx(
                                   WS_EX_APPWINDOW,
                                   "pong_class",
@@ -98,17 +99,17 @@ Window* create_window(int width, int height, const char* title)
                                   WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_OVERLAPPED
                                   , 100, 100, width, height, 0, 0, hInst, 0
                                   );
-    
+
 	if (windowHandle == 0)
 	{
 		MessageBoxA(windowHandle, "Failed to create window ", "Error", MB_ICONEXCLAMATION | MB_OK);
 		return false;
 	}
-    
+
 	Window* window = new Window;
 	window->handle = windowHandle;
 	window->dc = GetDC(windowHandle);
-    
+
 	return window;
 }
 
@@ -126,7 +127,7 @@ Window* create_window(int width, int height, const char* title)
 bool InitOpenGL(Window* window, int glMajorVersion, int glMinorVersion, int colorBits, int depthBits)
 {
 	Window* dummyWindow = create_window(0, 0, "dummy");
-    
+
 	const PIXELFORMATDESCRIPTOR pfd = {
         sizeof(PIXELFORMATDESCRIPTOR),  //  size of this pfd
         1,                     // version number
@@ -147,7 +148,7 @@ bool InitOpenGL(Window* window, int glMajorVersion, int glMinorVersion, int colo
         0,                     // reserved
         0, 0, 0                // layer masks ignored
 	};
-    
+
 	int iPixelFormat = ChoosePixelFormat(dummyWindow->dc, &pfd);
 	if (!iPixelFormat)
 	{
@@ -272,7 +273,7 @@ void key_callback(int key,int action)
 		_ball.StartMovement();
 }
 
-int main(int argc, char** argv)
+int pongMain(int argc, char** argv)
 {
 	Window* window = create_window(800, 600, "Pong");
     set_platform_key_callback(key_callback);
@@ -328,10 +329,16 @@ int main(int argc, char** argv)
 	}
 
 	delete window;
-
 }
 
-//int WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, LPSTR cmdline, int cmdshow)
-//{
-//	return pongMain(0,(char**)cmdline);
-//}
+#ifdef _DEBUG
+int main(int argc, char** argv)
+{
+	return pongMain(argc,argv);
+}
+#else
+int WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, LPSTR cmdline, int cmdshow)
+{
+	return pongMain(0,(char**)cmdline);
+}
+#endif

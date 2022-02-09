@@ -50,7 +50,11 @@ set(HEADERS
 	src/KHR
 )
 
-add_executable(${PROJECT_NAME} WIN32 ${SOURCES} ${HEADERS})
+if(WIN32)
+	set(RESOURCE_FILE "src/platform/resources.rc")
+endif()
+
+add_executable(${PROJECT_NAME} WIN32 ${SOURCES} ${HEADERS} ${RESOURCE_FILE})
 
 target_include_directories(${PROJECT_NAME} PUBLIC src/)
 
