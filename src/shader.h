@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SHADER_H
+#define SHADER_H
 
 #include "IDKMath.h"
 
@@ -29,3 +30,5 @@ private:
 	unsigned int _id;
 	std::unordered_map<std::string, int> _uniformCache;
 };
+
+#endif // SHADER_H

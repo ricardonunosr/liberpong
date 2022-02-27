@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PADDEL_H
+#define PADDEL_H
 
 #include "IDKMath.h"
 #include "shader.h"
@@ -28,3 +29,5 @@ private:
 	unsigned int _vao, _vbo;
 	std::unique_ptr<Shader> _shader;
 };
+
+#endif // PADDEL_H

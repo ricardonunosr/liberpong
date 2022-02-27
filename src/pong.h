@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PONG_H
+#define PONG_H
 
 #include "paddel.h"
 #include "ball.h"
@@ -27,3 +28,5 @@ static void ResetGame()
 	_rightPaddel.Init();
 	_ball.Init();
 };
+
+#endif // PONG_H

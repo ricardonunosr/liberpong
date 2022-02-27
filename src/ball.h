@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BALL_H
+#define BALL_H
 
 #include "IDKMath.h"
 #include "shader.h"
@@ -36,3 +37,5 @@ private:
 	unsigned int _width, _height;
 	std::unique_ptr<Shader> _shader;
 };
+
+#endif // BALL_H
