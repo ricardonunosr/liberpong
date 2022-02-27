@@ -2,12 +2,16 @@
 #define GL_H
 
 #include "gl/glcorearb.h"
-#include "gl/wglext.h"
 
+#ifdef _WIN32
+#include "gl/wglext.h"
 #ifdef PLATFORM
 #define MGLAPI __declspec(dllexport)
 #else
 #define MGLAPI __declspec(dllimport)
+#endif
+#else
+#define MGLAPI extern
 #endif
 
 MGLAPI PFNGLCULLFACEPROC glCullFace;

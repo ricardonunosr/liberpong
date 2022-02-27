@@ -2,5 +2,6 @@
 
 void GameObject::Update(float deltaTime)
 {
-	_position += (_movementDirection * _movementSpeed) * deltaTime;
+	idk::vec3 distance = (_movementDirection * _movementSpeed) * deltaTime;
+	_position += distance;
 }

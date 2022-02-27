@@ -28,7 +28,7 @@ void Ball::Init()
 	vertices[0] = _x;
 	vertices[1] = _y;
 	vertices[2] = _z;
-	//Color
+	// Color
 	vertices[3] = 0.0f;
 	vertices[4] = 0.0f;
 	vertices[5] = 1.0f;
@@ -41,7 +41,7 @@ void Ball::Init()
 		vertices[i * 7] = valueX;
 		vertices[i * 7 + 1] = valueY;
 		vertices[i * 7 + 2] = _z;
-		//Color RGBA
+		// Color RGBA
 		vertices[i * 7 + 3] = 1.0f;
 		vertices[i * 7 + 4] = 1.0f;
 		vertices[i * 7 + 5] = 1.0f;
@@ -49,7 +49,7 @@ void Ball::Init()
 	}
 
 	unsigned int *indices = new unsigned int[_numberOfSides * 3];
-	//Index Buffer
+	// Index Buffer
 	for (unsigned int i = 0; i < _numberOfSides; i++)
 	{
 		indices[i * 3] = 0;
@@ -120,7 +120,7 @@ void Ball::Update(float deltaTime)
 
 	_shader->Bind();
 
-	//printf("Checking: %.6f,%.6f,%.6f\n", _position.x, _position.y, _position.z);
+	// printf("Checking: %.6f,%.6f,%.6f\n", _position.x, _position.y, _position.z);
 
 	_shader->SetUniformVec3("position", _position);
 	_shader->Unbind();
@@ -142,7 +142,8 @@ bool Ball::CollidedWithPad(Paddel &paddel)
 
 		if (distanceFromBallToProjection.SquareLength() < radiusSquared)
 		{
-			_movementDirection = idk::normalize(_position - paddel._position);
+			idk::vec3 movDir = _position - paddel._position;
+			_movementDirection = idk::normalize(movDir);
 			_movementDirection.z = _position.z;
 		}
 	}
